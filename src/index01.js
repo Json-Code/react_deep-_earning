@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { render } from 'react-dom'
 
 // 这里是使用类的方式创建的组件 这是jsx语法 但不是合法的js代码
 // class App extends Component {
@@ -13,7 +12,7 @@ import { render } from 'react-dom'
 // }
 
 // 所以react在真正的渲染的时候会把上面的代码编译为下面这个样子来运行，下面的代码就是合法的js
-class App extends Component {
+export default class Index01 extends Component {
   render () {
     return (
       // React.createElemen是一个方法，用于创建参数，可以有很多的参数，但前两个是固定的：
@@ -38,8 +37,3 @@ class App extends Component {
     )
   }
 }
-
-render(
-  <App/>,
-  document.querySelector('#root')
-)

@@ -1,10 +1,12 @@
 import React from 'react';
-import index01 from './index01'
+import Index01 from './index01'
+import Index02 from './index02'
 
 function App() {
   return (
     <div>
-      <index01></index01>
+      <Index01></Index01>
+      <Index02></Index02>
     </div>
   );
 }
