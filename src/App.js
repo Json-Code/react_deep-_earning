@@ -1,19 +1,15 @@
-import React, { Fragment } from 'react';
-import Index01 from './index01'
-import Index02 from './index02'
-import { TodoHeader, Like } from './components'
+import React, { Component } from 'react'
+import CountBtn from './components/CounterBtn'
+import Counter from './components/Counter'
 
-function App() {
-  return (
-    <Fragment>
-      <Index01></Index01>
-      <Index02></Index02>
-      <TodoHeader desc="今日事今日毕" x={1} y={2}>
-        待办事项列表
-      </TodoHeader>
-      <Like></Like>
-    </Fragment>
-  );
+export default class App extends Component {
+  render () {
+    return (
+      <>
+        <CountBtn types="decrement">-</CountBtn>
+        <Counter></Counter>
+        <CountBtn types="increment">+</CountBtn>
+      </>
+    )
+  }
 }
-
-export default App;

@@ -1,9 +1,11 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './App';
+import React from 'react'
+import { render } from 'react-dom'
+import { CounterProvider } from './counterStore'
+import App from './App'
 
-// 全局挂载Axios
-import * as services from './services'
-React.Component.prototype.http = services
-
-ReactDOM.render(<App />, document.getElementById('root'));
+render(
+  <CounterProvider>
+    <App></App>
+  </CounterProvider>,
+  document.querySelector('#root')
+)
