@@ -4,10 +4,9 @@ import { HashRouter as Router, Route, Switch, Redirect } from 'react-router-dom'
 
 import App from './App'
 
-// 不需要登录就能打开的页面mianRouter
-import { mainRouter } from './routes'
-
 import './index.less'
+// 不需要登录就能打开的页面mianRouter
+import { mainRoutes } from './routes'
 
 render(
   <Router>
@@ -19,7 +18,7 @@ render(
 
       {
         // 循环插入Route 
-        mainRouter.map(route => {
+        mainRoutes.map(route => {
           return <Route key={route.pathname} path={route.pathname} component={route.component}></Route>
         })
       }
