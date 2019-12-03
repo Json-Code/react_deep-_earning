@@ -18,48 +18,31 @@ export default class List extends Component {
   constructor() {
     super()
     this.state = {
-      dataSource : [
-        {
-          key: '1',
-          name: '胡彦斌',
-          age: 32,
-          address: '西湖区湖底公园1号',
-        },
-        {
-          key: '2',
-          name: '胡彦祖',
-          age: 42,
-          address: '西湖区湖底公园1号',
-        },
-      ],
-      columns: [
-        {
-          title: '姓名',
-          dataIndex: 'name',
-          key: 'name',
-        },
-        {
-          title: '年龄',
-          dataIndex: 'age',
-          key: 'age',
-        },
-        {
-          title: '住址',
-          dataIndex: 'address',
-          key: 'address',
-        },
-        {
-          title: '操作',
-          dataIndex: 'actions',
-          key: 'actions',
-          render: (text, record, index) => {
-            return <Button>编辑</Button>
-          }
-        }
-      ],
+      dataSource: [],
+      columns: [],
       total: 0,
-      isLoading: false
+      isLoading: false,
+      offset: 0,
+      limited: 10
     }
+  }
+
+  // 分页
+  onPageChange = (page, pageSize) => {
+    this.setState({
+      offset: pageSize * (page - 1),
+      limited: pageSize
+    }, () => {
+      this.getData()
+    })
+  }
+  onShowSizeChange = (current, size) => {
+    this.setState({
+      offset: 0,
+      limited: size
+    }, () => {
+      this.getData()
+    })    
   }
 
   // 对应标题map
@@ -121,7 +104,7 @@ export default class List extends Component {
     this.setState({
       isLoading: true
     })
-    getArticles()
+    getArticles(this.state.offset, this.state.limited)
       .then(resp => {
         // 获取每一行的key
         const columnKeys = Object.keys(resp.list[0])
@@ -159,8 +142,14 @@ export default class List extends Component {
             columns={this.state.columns}
             loading={this.state.isLoading}
             pagination={{
+              current: this.state.offset / this.state.limited + 1,
               total: this.state.total,
-              hideOnSinglePage: true
+              hideOnSinglePage: true,
+              showQuickJumper: true,
+              showSizeChanger: true,
+              onChange: this.onPageChange,
+              onShowSizeChange: this.onShowSizeChange,
+              pageSizeOptions: ['10', '15', '20', '30']
             }}
           />
         </Card>
