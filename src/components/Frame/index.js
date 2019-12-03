@@ -11,13 +11,11 @@ const { Header, Content, Sider } = Layout
 class Frame extends Component {
   // 使用箭头函数时无需手动用bind改变this指向
   onMenuClick = ({ key }) => {
-    console.log(this.props)
     // 使用push方法来进行跳转
     this.props.history.push(key)
   }
 
   render() {
-    console.log(this.props)
     return (
       <Layout style={{minHeight: '100%'}}>
       <Header className="header ad-header">
@@ -55,9 +53,7 @@ class Frame extends Component {
           <Content
             style={{
               background: '#fff',
-              padding: 24,
-              margin: 0,
-              minHeight: 280,
+              margin: 0
             }}
           >
             {this.props.children}
