@@ -24,9 +24,30 @@ service.interceptors.response.use((resp) => {
   }
 })
 
+// 获取文章列表
 export const getArticles = (offset = 0, limited = 10) => {
   return service.post('/api/v1/articlelist', {
     offset,
     limited
   })
 }
+
+// 通过ID删除文章
+export const deleteArticle = (id) => {
+  return service.post(`/api/v1/articleDelete/${id}`)
+}
+
+// 通过ID获取文章
+export const getArticleById = (id) => {
+  return service.post(`/api/v1/article/${id}`)
+}
+
+// 保存文章
+export const saveArticle = (id, data) => {
+  return service.post(`/api/v1/articleEdit/${id}`, data)
+}
+
+// 新建文章 暂时不用
+// export const newArticle = (data) => {
+//   return service.post(`/api/v1/article`, data)
+// }

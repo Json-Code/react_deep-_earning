@@ -16,6 +16,10 @@ class Frame extends Component {
   }
 
   render() {
+    const selectedKeysArr = this.props.location.pathname.split('/')
+    // 小技巧 截取数组时可以用length 不用slice也可以
+    selectedKeysArr.length = 3
+    console.log(selectedKeysArr)
     return (
       <Layout style={{minHeight: '100%'}}>
       <Header className="header ad-header">
@@ -28,7 +32,7 @@ class Frame extends Component {
           <Menu
             mode="inline"
             // 当前选中的菜单项 key 数组
-            selectedKeys={this.props.location.pathname}
+            selectedKeys={selectedKeysArr.join('/')}
             onClick={this.onMenuClick}
             style={{ height: '100%', borderRight: 0 }}
           >

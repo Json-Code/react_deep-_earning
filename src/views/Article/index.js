@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
-import { Card, Button, Table, Tag } from 'antd';
+import { Card, Button, Table, Tag, Modal, Typography, message, Tooltip, Radio} from 'antd';
 import moment from 'moment'
+import XLSX from 'xlsx'
 
-import { getArticles } from '../../requests'
+import { getArticles, deleteArticle } from '../../requests'
 
 const ButtonGroup = Button.Group
 
@@ -23,7 +24,11 @@ export default class List extends Component {
       total: 0,
       isLoading: false,
       offset: 0,
-      limited: 10
+      limited: 10,
+      deleteArticleTitle: '',
+      isShowArticleModal: false,
+      deleteArticleConfirmLoading: false,
+      currentDeleteArticleID: null
     }
   }
 
@@ -45,6 +50,29 @@ export default class List extends Component {
     })    
   }
 
+  // 生成Excel
+  toExcel = () => {
+    // 在实际项目中，这个功能是前端发送一个ajax请求到后端，然后返回一个文件的下载地址
+
+    // 组合数据 一个二维数组 第一维是表头 第二维是数据
+    const data = [Object.keys(this.state.dataSource[0])]
+    for (let i = 0; i < this.state.dataSource.length; i++) {
+      data.push([
+        this.state.dataSource[i].id,
+        this.state.dataSource[i].title,
+        this.state.dataSource[i].author,
+        this.state.dataSource[i].amount,
+        moment(this.state.dataSource[i].createAt).format('YYYY年MM月DD日 HH:mm:ss')
+      ])
+    }
+		/* convert state to workbook */
+		const ws = XLSX.utils.aoa_to_sheet(this.state.data);
+		const wb = XLSX.utils.book_new();
+		XLSX.utils.book_append_sheet(wb, ws, "SheetJS");
+		/* generate XLSX file and send to client */
+		XLSX.writeFile(wb, `articles-${this.state.offset / this.state.limited + 1}-${moment().format('YYYYMMDDHHMMSS')}.xlsx`)    
+  }
+
   // 对应标题map
   createColumns = (columnKeys) => {
     const columns = columnKeys.map(item => {
@@ -63,7 +91,9 @@ export default class List extends Component {
             // }
             // return <Tag color={titleMap[titleKey]}></Tag>
             return (
-              <Tag color={record.amount > 200 ? 'red' : 'green'}>{record.amount}</Tag>
+              <Tooltip title="浏览量">
+                <Tag color={record.amount > 200 ? 'red' : 'green'}>{record.amount}</Tag>
+              </Tooltip>
             )
           }
         }
@@ -89,17 +119,88 @@ export default class List extends Component {
     columns.push({
       title: '操作',
       key: 'action',
-      render: () => {
+      render: (record) => {
         return (
           <ButtonGroup>
-            <Button size='small' type="primary">编辑</Button>
-            <Button size='small' type="danger">删除</Button>
+            <Button size='small' type="primary" onClick={this.toEdit.bind(this, record)}>编辑</Button>
+            <Button size='small' type="danger" onClick={this.showDeleteArticleModal.bind(this, record)}>删除</Button>
           </ButtonGroup>
         )
       }
     })
     return columns
   }
+
+  toEdit = (record) => {
+    this.props.history.push({
+      pathname: `/admin/article/edit/${record.id}`,
+      state: {
+        title: record.title
+      }
+    })
+  }
+
+  toCreate = () => {
+    this.props.history.push({
+      pathname: '/admin/article/edit',
+    })    
+  }
+  // 删除文章
+  showDeleteArticleModal (record) {
+    //  方法一：使用函数的方式调用，定制化没那么强
+    // Modal.confirm({
+    //   title: '删除确认',
+    //   content: <Typography>确认要删除 <span style={{color: '#f00'}}>{record.title}</span>?</Typography>,
+    //   okText: '别墨迹！赶紧删掉！',
+    //   cancelText: '我点错了！',
+    //   onOk() {
+    //     deleteArticle(record.id)
+    //       .then(resp => {
+    //         console.log(resp)
+    //       })
+    //   }
+    // })
+
+    // 方法二：
+    this.setState({
+      isShowArticleModal: true,
+      deleteArticleTitle: record.title,
+      currentDeleteArticleID: record.id
+    })
+  }
+  deleteArticle = () => {
+    this.setState({
+      deleteArticleConfirmLoading: true
+    })
+    deleteArticle(this.state.currentDeleteArticleID)
+      .then(resp => {
+        message.success(resp.msg)
+        // 这里沟通的时候有坑，究竟是留在当前页还是到第一页
+        // 第一页
+        this.setState({
+          offset: 0
+        }, () => {
+          this.getData()
+        })
+      })
+      .finally(() => {
+        this.setState({
+          deleteArticleConfirmLoading: false,
+          isShowArticleModal: false
+        })
+      })
+  }
+
+  // Modal方法
+  hideDeleteModal = () => {
+    this.setState({
+      isShowArticleModal: false,
+      deleteArticleTitle: '',
+      deleteArticleConfirmLoading: false
+    })
+  }
+
+  // 获取数据
   getData = () => {
     this.setState({
       isLoading: true
@@ -133,7 +234,7 @@ export default class List extends Component {
         <Card 
           title="文章列表" 
           bordered={false} 
-          extra={<Button>导出excel</Button>}
+          extra={<Radio.Group><Radio.Button onClick={this.toExcel}>导出excel</Radio.Button><Radio.Button onClick={this.toCreate}>新建文章</Radio.Button></Radio.Group>}
         >
           <Table
             //这里需要绑定record和官方文档上不同
@@ -153,6 +254,14 @@ export default class List extends Component {
             }}
           />
         </Card>
+        <Modal
+          title='此操作不可逆，请谨慎'
+          visible={this.state.isShowArticleModal}
+          onCancel={this.hideDeleteModal}
+          confirmLoading={this.state.deleteArticleConfirmLoading}
+          onOk={this.deleteArticle}>
+            <Typography>确认要删除 <span style={{color: '#f00'}}>{this.state.deleteArticleTitle}</span>?</Typography>
+        </Modal>
       </div>
     )
   }

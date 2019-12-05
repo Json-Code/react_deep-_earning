@@ -29,7 +29,7 @@ export const adminRoutes = [{
   isNav: true,
   exact: true
 }, {
-  pathname: '/admin/article/edit/:id',
+  pathname: '/admin/article/edit/:id?',
   component: ArticleEdit
 }, {
   pathname: '/admin/settings',

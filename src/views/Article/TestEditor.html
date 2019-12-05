@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <button onclick="boldStyle()">加粗</button>
+  <button onclick="italicStyle()">倾斜</button>
+  <div contenteditable style="border: 1px solid #dedede; width: 500px; min-width: 300px">
+
+  </div>
+</body>
+<script>
+  var boldStyle = function() {
+    document.execCommand('bold')
+  }
+  var italicStyle = function() {
+    document.execCommand('italic')
+  }
+</script>
+</html>
