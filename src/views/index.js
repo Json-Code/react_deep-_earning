@@ -36,6 +36,14 @@ const ArticleEdit = loadable({
   loader: () => import('./Article/Edit'),
   loading: Loading
 })
+const Notifications = loadable({
+  loader: () => import('./Notifications'),
+  loading: Loading
+})
+const NoAuth = loadable({
+  loader: () => import('./NoAuth'),
+  loading: Loading
+})
 
 export {
   Dashboard,
@@ -43,5 +51,7 @@ export {
   NotFound,
   Settings,
   ArticleList,
-  ArticleEdit
+  ArticleEdit,
+  Notifications,
+  NoAuth
 }

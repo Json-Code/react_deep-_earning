@@ -5,6 +5,9 @@ const isDev = process.env.NODE_ENV === 'development'
 const service = axios.create({
   baseURL: isDev ? 'http://rap2api.taobao.org/app/mock/238551' : ''
 })
+const service1 = axios.create({
+  baseURL: isDev ? 'http://rap2api.taobao.org/app/mock/238551' : ''
+})
 
 service.interceptors.request.use((config) => {
   config.data = Object.assign({}, config.data, {
@@ -51,3 +54,18 @@ export const saveArticle = (id, data) => {
 // export const newArticle = (data) => {
 //   return service.post(`/api/v1/article`, data)
 // }
+
+// 保存文章
+export const getArticleAmount = () => {
+  return service.post(`/api/v1/articleAmount`)
+}
+
+// 获取通知列表
+export const getNotifications = () => {
+  return service.post(`/api/v1/notifications`)
+}
+
+// 登录接口
+export const login = (userInfo) => {
+  return service1.post(`/api/v1/login`, userInfo)
+}
